@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="AvatarView" customModule="Spot" customModuleProvider="target">
+            <connections>
+                <outlet property="avatarImage" destination="elJ-Zd-o9J" id="It2-JR-ohE"/>
+                <outlet property="view" destination="iN0-l3-epB" id="TVt-hY-rU5"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clipsSubviews="YES" contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="200" height="200"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="elJ-Zd-o9J">
+                    <rect key="frame" x="0.0" y="0.0" width="200" height="200"/>
+                </imageView>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="elJ-Zd-o9J" secondAttribute="bottom" id="3Zj-wQ-qpJ"/>
+                <constraint firstAttribute="trailing" secondItem="elJ-Zd-o9J" secondAttribute="trailing" id="8Ix-tb-rMc"/>
+                <constraint firstItem="elJ-Zd-o9J" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="R9s-s6-kQV"/>
+                <constraint firstItem="elJ-Zd-o9J" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="sB0-pi-vhp"/>
+                <constraint firstItem="elJ-Zd-o9J" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="tgb-Jz-wqz"/>
+                <constraint firstItem="elJ-Zd-o9J" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="wdA-gh-vug"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="-152" y="-54"/>
+        </view>
+    </objects>
+</document>
