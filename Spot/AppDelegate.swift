@@ -13,8 +13,18 @@ import GoogleSignIn
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 
-
     var window: UIWindow?
+    
+    func configureAppBgdColor() {
+        let color = AppState.sharedInstance.getColorForState()
+        var bgdColor = UIColor()
+        
+        bgdColor = UIColor.blend(color1: color, intensity1: 0.1, color2: UIColor.white, intensity2: 1)
+        
+        UIView.animate(withDuration: 0.2, delay: 0, options:.curveEaseInOut, animations: {
+            UIApplication.shared.keyWindow?.rootViewController?.view.backgroundColor = bgdColor
+        }, completion:nil)
+    }
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {

@@ -29,17 +29,7 @@ class FirstViewController: UIViewController {
     var occupantUid: String? = nil
     var occupant: String? = nil
     var occupantDisplayImageUrl: String? = nil
-    var spotState: SpotState = .Default
     var occupantSectionVisible: Bool = false
-    
-    enum SpotState {
-        case Default
-        case Checking
-        case Open
-        case Occupied
-        case Owned
-        case LoggedOut
-    }
     
     enum OccupiedSectionAnimationDirection {
         case Initial
@@ -75,7 +65,8 @@ class FirstViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    func configureUIForState(state: SpotState) {
+    func configureUIForState(state: AppState.SpotState) {
+        
         switch state {
         case .Checking:
             self.openLabel.text = "Checking..."
@@ -135,7 +126,9 @@ class FirstViewController: UIViewController {
             self.animateSpotForDefault()
         }
         
-        self.spotState = state
+        let app = UIApplication.shared.delegate as! AppDelegate
+        AppState.sharedInstance.setState(state: state)
+        
         self.animateOccupantSection()
         self.configureBackgroundColor()
     }
@@ -177,16 +170,16 @@ class FirstViewController: UIViewController {
         self.occupant = occupant
         self.occupantDisplayImageUrl = occupantDiplayImageUrl
         
-        var state = SpotState.Open
+        var state = AppState.SpotState.Open
         
         if occupied {
             if occupantUid == AppState.sharedInstance.uid {
-                state = SpotState.Owned
+                state = .Owned
             } else {
-                state = SpotState.Occupied
+                state = .Occupied
             }
         } else {
-            state = SpotState.Open
+            state = .Open
         }
         
         self.configureUIForState(state: state)
@@ -261,11 +254,11 @@ class FirstViewController: UIViewController {
         let distance = self.occupiedView.frame.size.height + 16 + self.tabBarController!.tabBar.frame.size.height
         var key = String()
         
-        if self.spotState == .Checking {
+        if AppState.sharedInstance.spotState == .Checking {
             return
         }
         
-        if self.spotState == .Open || self.spotState == .LoggedOut {
+        if AppState.sharedInstance.spotState == .Open || AppState.sharedInstance.spotState == .LoggedOut {
             direction = .Out
         }
         
@@ -323,21 +316,12 @@ class FirstViewController: UIViewController {
     func configureBackgroundColor() {
         var color = UIColor()
         var ringColor = UIColor()
-        var bgdColor = UIColor()
         var alertBgdColor = UIColor()
+        let app = UIApplication.shared.delegate as! AppDelegate
+        app.configureAppBgdColor()
         
-        switch self.spotState {
-        case .Open:
-            color = Constants.Colors.green
-        case .Occupied:
-            color = Constants.Colors.red
-        case .Owned:
-            color = Constants.Colors.blue
-        default:
-            color = UIColor.white
-        }
+        color = AppState.sharedInstance.getColorForState()
 
-        bgdColor = UIColor.blend(color1: color, intensity1: 0.1, color2: UIColor.white, intensity2: 1)
         ringColor = UIColor.blend(color1: color, intensity1: 0.2, color2: UIColor.white, intensity2: 1)
         alertBgdColor = UIColor.blend(color1: color, intensity1: 0.15, color2: Constants.Colors.darkGray, intensity2: 1)
         
@@ -347,7 +331,6 @@ class FirstViewController: UIViewController {
             self.openViewBgd.layer.borderColor = ringColor.cgColor
             self.openViewBgd.layer.borderWidth = 2
             self.occupiedView.backgroundColor = alertBgdColor
-            self.parent?.view.backgroundColor = bgdColor
         }, completion:nil)
     }
     

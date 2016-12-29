@@ -48,6 +48,8 @@ class SecondViewController: UIViewController, GIDSignInUIDelegate, GIDSignInDele
     }
     
     func configureUI() {
+        let app = UIApplication.shared.delegate as! AppDelegate
+        
         if(AppState.sharedInstance.signedIn) {
             self.signInButton.alpha = 0
             self.signOutButton.alpha = 1
@@ -70,6 +72,8 @@ class SecondViewController: UIViewController, GIDSignInUIDelegate, GIDSignInDele
         
         self.view.backgroundColor = UIColor.clear
         self.signOutButton.setupForSecondary()
+        
+        app.configureAppBgdColor()
     }
 
     override func didReceiveMemoryWarning() {
