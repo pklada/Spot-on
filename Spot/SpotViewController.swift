@@ -241,7 +241,10 @@ class FirstViewController: UIViewController {
         
         if let isOccupied = self.occupied {
             if (isOccupied && self.occupantUid == AppState.sharedInstance.uid) {
-                relinquishSpot()
+                let overlay = OverlayView.init(title: "Relinquish spot?", body: "If you leave the spot, its up for grabs.", confirmCallback: {
+                    self.relinquishSpot()
+                })
+                self.view.addSubview(overlay)
             } else if(isOccupied) {
                 singleRefresh()
             } else {

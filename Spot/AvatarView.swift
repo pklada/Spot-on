@@ -16,10 +16,13 @@ class AvatarView: UIView {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
-        Bundle.main.loadNibNamed("AvatarView", owner: self, options: nil)
-        view.backgroundColor = UIColor.clear
-        self.addSubview(view)
-        view.frame = self.bounds
+        self.initialize()
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        self.initialize()
     }
     
     override func awakeFromNib() {
@@ -28,6 +31,13 @@ class AvatarView: UIView {
         self.view.clipsToBounds = true
         self.clipsToBounds = false
         self.backgroundColor = UIColor.clear
+    }
+    
+    func initialize() {
+        Bundle.main.loadNibNamed("AvatarView", owner: self, options: nil)
+        view.backgroundColor = UIColor.clear
+        self.addSubview(view)
+        view.frame = self.bounds
     }
     
     func setShadow(size: CGSize = CGSize(width: 0, height: 4), opacity: Float = 0.25, radius: CGFloat = 24) {

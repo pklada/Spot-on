@@ -10,10 +10,13 @@
 		0AE0B1E7970DEA1C43108560 /* Pods_SpotTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 71341F1199B2D4028FE4BE94 /* Pods_SpotTests.framework */; };
 		0B13CB55CC58ED59948201F6 /* Pods_Spot.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3126F689EE6EE9095A5173FB /* Pods_Spot.framework */; };
 		11AEC194A2B239B56DA00429 /* Pods_SpotUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 969408DE13D4D95269DDEEFE /* Pods_SpotUITests.framework */; };
+		D0176B431E1491AC00F2F6F4 /* LayoutHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0176B421E1491AC00F2F6F4 /* LayoutHelpers.swift */; };
+		D0176B451E15819200F2F6F4 /* AnimationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0176B441E15819200F2F6F4 /* AnimationHelper.swift */; };
 		D04FE1291E11F1C50021148D /* GoogleToolboxForMac in Frameworks */ = {isa = PBXBuildFile; fileRef = D04FE1281E11F1C40021148D /* GoogleToolboxForMac */; };
 		D04FE12B1E11F5E90021148D /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04FE12A1E11F5E90021148D /* AppState.swift */; };
 		D04FE12D1E11F63A0021148D /* MeasurementHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04FE12C1E11F63A0021148D /* MeasurementHelper.swift */; };
 		D04FE12F1E122EF80021148D /* UIImageView+Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04FE12E1E122EF80021148D /* UIImageView+Extras.swift */; };
+		D096F36E1E1485E3006F9661 /* Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = D096F36D1E1485E3006F9661 /* Button.swift */; };
 		D0BDB1431E11E6E300FB7BF2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BDB1421E11E6E300FB7BF2 /* AppDelegate.swift */; };
 		D0BDB1451E11E6E300FB7BF2 /* SpotViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BDB1441E11E6E300FB7BF2 /* SpotViewController.swift */; };
 		D0BDB1471E11E6E300FB7BF2 /* AccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BDB1461E11E6E300FB7BF2 /* AccountViewController.swift */; };
@@ -37,6 +40,8 @@
 		D0FE04E61E13541400892325 /* ic_flag@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D0FE04E31E13541400892325 /* ic_flag@2x.png */; };
 		D0FE04E71E13541400892325 /* ic_flag@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = D0FE04E41E13541400892325 /* ic_flag@3x.png */; };
 		D0FE04E91E135BB000892325 /* UIColor+extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0FE04E81E135BB000892325 /* UIColor+extras.swift */; };
+		D0FE04EB1E14546900892325 /* OverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0FE04EA1E14546900892325 /* OverlayView.swift */; };
+		D0FE04ED1E14547300892325 /* OverlayView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D0FE04EC1E14547300892325 /* OverlayView.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,10 +69,13 @@
 		969408DE13D4D95269DDEEFE /* Pods_SpotUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SpotUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D67A7056EC99F49EC40DABE /* Pods-Spot.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spot.release.xcconfig"; path = "Pods/Target Support Files/Pods-Spot/Pods-Spot.release.xcconfig"; sourceTree = "<group>"; };
 		BF4F59C0916FD49C6A93A099 /* Pods-SpotUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SpotUITests/Pods-SpotUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		D0176B421E1491AC00F2F6F4 /* LayoutHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LayoutHelpers.swift; sourceTree = "<group>"; };
+		D0176B441E15819200F2F6F4 /* AnimationHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AnimationHelper.swift; path = Spot/AnimationHelper.swift; sourceTree = "<group>"; };
 		D04FE1281E11F1C40021148D /* GoogleToolboxForMac */ = {isa = PBXFileReference; lastKnownFileType = folder; name = GoogleToolboxForMac; path = Pods/GoogleToolboxForMac; sourceTree = "<group>"; };
 		D04FE12A1E11F5E90021148D /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		D04FE12C1E11F63A0021148D /* MeasurementHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeasurementHelper.swift; sourceTree = "<group>"; };
 		D04FE12E1E122EF80021148D /* UIImageView+Extras.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extras.swift"; sourceTree = "<group>"; };
+		D096F36D1E1485E3006F9661 /* Button.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Button.swift; sourceTree = "<group>"; };
 		D0BDB13F1E11E6E300FB7BF2 /* Spot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0BDB1421E11E6E300FB7BF2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D0BDB1441E11E6E300FB7BF2 /* SpotViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotViewController.swift; sourceTree = "<group>"; };
@@ -97,6 +105,8 @@
 		D0FE04E31E13541400892325 /* ic_flag@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "ic_flag@2x.png"; path = "Resources/Images/ic_flag@2x.png"; sourceTree = "<group>"; };
 		D0FE04E41E13541400892325 /* ic_flag@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "ic_flag@3x.png"; path = "Resources/Images/ic_flag@3x.png"; sourceTree = "<group>"; };
 		D0FE04E81E135BB000892325 /* UIColor+extras.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+extras.swift"; sourceTree = "<group>"; };
+		D0FE04EA1E14546900892325 /* OverlayView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverlayView.swift; sourceTree = "<group>"; };
+		D0FE04EC1E14547300892325 /* OverlayView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OverlayView.xib; sourceTree = "<group>"; };
 		D57D57D3547ED8E2C25325DD /* Pods-Spot.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spot.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Spot/Pods-Spot.debug.xcconfig"; sourceTree = "<group>"; };
 		E730DB65AEE473ECB1E63CD4 /* Pods-SpotUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-SpotUITests/Pods-SpotUITests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -146,6 +156,7 @@
 		D0BDB1361E11E6E300FB7BF2 = {
 			isa = PBXGroup;
 			children = (
+				D0176B441E15819200F2F6F4 /* AnimationHelper.swift */,
 				D0BDB1411E11E6E300FB7BF2 /* Spot */,
 				D0BDB1581E11E6E400FB7BF2 /* SpotTests */,
 				D0BDB1631E11E6E400FB7BF2 /* SpotUITests */,
@@ -174,7 +185,11 @@
 				D04FE12A1E11F5E90021148D /* AppState.swift */,
 				D0BDB14B1E11E6E300FB7BF2 /* Assets.xcassets */,
 				D0C445621E12323C000B55F4 /* AvatarView.swift */,
+				D096F36D1E1485E3006F9661 /* Button.swift */,
+				D0FE04EA1E14546900892325 /* OverlayView.swift */,
 				D0C445601E1231D6000B55F4 /* AvatarView.xib */,
+				D0FE04EC1E14547300892325 /* OverlayView.xib */,
+				D0176B421E1491AC00F2F6F4 /* LayoutHelpers.swift */,
 				D0FE04D31E1303DB00892325 /* Constants.swift */,
 				D0BDB1721E11E8C500FB7BF2 /* GoogleService-Info.plist */,
 				D0FE04DB1E131A2100892325 /* Images */,
@@ -360,6 +375,7 @@
 				D0BDB14F1E11E6E300FB7BF2 /* LaunchScreen.storyboard in Resources */,
 				D0FE04D81E131A1600892325 /* ic_spot.png in Resources */,
 				D0BDB1731E11E8C500FB7BF2 /* GoogleService-Info.plist in Resources */,
+				D0FE04ED1E14547300892325 /* OverlayView.xib in Resources */,
 				D0BDB14C1E11E6E300FB7BF2 /* Assets.xcassets in Resources */,
 				D0FE04D91E131A1600892325 /* ic_spot@2x.png in Resources */,
 				D0FE04DA1E131A1600892325 /* ic_spot@3x.png in Resources */,
@@ -533,11 +549,15 @@
 				D04FE12D1E11F63A0021148D /* MeasurementHelper.swift in Sources */,
 				D0FE04E91E135BB000892325 /* UIColor+extras.swift in Sources */,
 				D0C445631E12323C000B55F4 /* AvatarView.swift in Sources */,
+				D0FE04EB1E14546900892325 /* OverlayView.swift in Sources */,
 				D0BDB1431E11E6E300FB7BF2 /* AppDelegate.swift in Sources */,
 				D0BDB1451E11E6E300FB7BF2 /* SpotViewController.swift in Sources */,
+				D096F36E1E1485E3006F9661 /* Button.swift in Sources */,
+				D0176B451E15819200F2F6F4 /* AnimationHelper.swift in Sources */,
 				D04FE12B1E11F5E90021148D /* AppState.swift in Sources */,
 				D04FE12F1E122EF80021148D /* UIImageView+Extras.swift in Sources */,
 				D0FE04D21E12FB0A00892325 /* AccountHelpers.swift in Sources */,
+				D0176B431E1491AC00F2F6F4 /* LayoutHelpers.swift in Sources */,
 				D0FE04D41E1303DB00892325 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

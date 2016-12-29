@@ -13,7 +13,7 @@ import GoogleSignIn
 class SecondViewController: UIViewController, GIDSignInUIDelegate, GIDSignInDelegate {
     
     @IBOutlet weak var signInButton: GIDSignInButton!
-    @IBOutlet weak var signOutButton: UIButton!
+    @IBOutlet weak var signOutButton: Button!
     @IBOutlet weak var mainLabel: UILabel!
     @IBOutlet weak var avatarView: AvatarView!
     @IBOutlet weak var infoLabel: UILabel!
@@ -69,7 +69,7 @@ class SecondViewController: UIViewController, GIDSignInUIDelegate, GIDSignInDele
         }
         
         self.view.backgroundColor = UIColor.clear
-        self.signOutButton.tintColor = Constants.Colors.blue
+        self.signOutButton.setupForSecondary()
     }
 
     override func didReceiveMemoryWarning() {
@@ -78,13 +78,17 @@ class SecondViewController: UIViewController, GIDSignInUIDelegate, GIDSignInDele
     }
     
     func signedOut() {
-        AccountHelpers.signOut()
-        self.configureUI()
+        let overlay = OverlayView.init(title: "You sure?", body: "We don't like your kind anyway!", confirmCallback: {
+            AccountHelpers.signOut()
+            self.configureUI()
+        })
+        
+        self.view.addSubview(overlay)
     }
     
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error?) {
         
-        guard let authentication = user.authentication else { return }
+        guard let authentication = user?.authentication else { return }
         let credential = FIRGoogleAuthProvider.credential(withIDToken: authentication.idToken,
                                                           accessToken: authentication.accessToken)
         FIRAuth.auth()?.signIn(with: credential) { (user, error) in

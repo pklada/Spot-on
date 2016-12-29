@@ -12,6 +12,7 @@ target 'Spot' do
   pod 'Firebase/Messaging'
   pod 'GoogleSignIn'
   pod 'pop', '~> 1.0'
+  pod 'Reveal-SDK', :configurations => ['Debug']
 
   target 'SpotTests' do
     inherit! :search_paths

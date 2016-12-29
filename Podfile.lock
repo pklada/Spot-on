@@ -63,6 +63,7 @@ PODS:
   - GTMSessionFetcher/Full (1.1.7):
     - GTMSessionFetcher/Core (= 1.1.7)
   - pop (1.0.9)
+  - Reveal-SDK (5)
 
 DEPENDENCIES:
   - Firebase/Auth
@@ -71,6 +72,7 @@ DEPENDENCIES:
   - Firebase/Messaging
   - GoogleSignIn
   - pop (~> 1.0)
+  - Reveal-SDK
 
 SPEC CHECKSUMS:
   Firebase: b8134e285eb33201115bc688bc5d7f112923bc1f
@@ -88,7 +90,8 @@ SPEC CHECKSUMS:
   GTMOAuth2: 7fc9c10f5c745f4d9850419ea88889fe3baa6b7d
   GTMSessionFetcher: a1f8ed39e4fe21c68957daed472c7afbcdf29166
   pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
+  Reveal-SDK: 7e3945c0c3649106c3cc8923672ee545e25605c0
 
-PODFILE CHECKSUM: cb3997e436a6ab3d6101abaf1255f88c099df239
+PODFILE CHECKSUM: 26a932440e0d5d29535a449f80245fa2ace66be9
 
 COCOAPODS: 1.1.1
