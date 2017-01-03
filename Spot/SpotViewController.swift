@@ -226,10 +226,10 @@ class FirstViewController: UIViewController {
     }
     
     func animateOccupantSection(desiredState: AppState.SpotState, currentState: AppState.SpotState) {
-        var direction = OccupiedSectionAnimationDirection.In
+        var direction: OccupiedSectionAnimationDirection
         let anim = POPSpringAnimation.init(propertyNamed: kPOPLayerTranslationY)
         let distance = self.occupiedView.frame.size.height + 16 + self.tabBarController!.tabBar.frame.size.height
-        var key = String()
+        var key: String
         
         let statesIn = [AppState.SpotState.Occupied, AppState.SpotState.Owned]
         let statesOut = [AppState.SpotState.Default, AppState.SpotState.NoAuth, AppState.SpotState.Open]
@@ -239,9 +239,9 @@ class FirstViewController: UIViewController {
         }
         
         if self.occupiedViewVisible && statesOut.contains(desiredState) {
-            direction = OccupiedSectionAnimationDirection.Out
+            direction = .Out
         } else if !self.occupiedViewVisible && statesIn.contains(desiredState) {
-            direction = OccupiedSectionAnimationDirection.In
+            direction = .In
         } else {
             return
         }
