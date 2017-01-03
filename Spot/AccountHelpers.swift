@@ -26,6 +26,7 @@ class AccountHelpers: NSObject {
         AppState.sharedInstance.photoURL = nil
         AppState.sharedInstance.signedIn = false
         AppState.sharedInstance.uid = nil
+        AppState.sharedInstance.spotState = .NoAuth
     }
     
     static func getCurrentUser() -> FIRUser? {

@@ -19,7 +19,7 @@ class AppState: NSObject {
         case Open
         case Occupied
         case Owned
-        case LoggedOut
+        case NoAuth
     }
     
     var spotState: SpotState = .Default
@@ -28,7 +28,7 @@ class AppState: NSObject {
         spotState = state
     }
     
-    func getColorForState() -> UIColor {
+    func getColorForState() -> UIColor? {
         var color = UIColor()
         
         switch self.spotState {
@@ -38,10 +38,10 @@ class AppState: NSObject {
             color = Constants.Colors.red
         case .Owned:
             color = Constants.Colors.blue
-        case .LoggedOut:
-            color = UIColor.white
+        case .NoAuth:
+            return nil
         default:
-            color = UIColor.white
+            return nil
         }
         
         return color
@@ -51,4 +51,9 @@ class AppState: NSObject {
     var displayName: String?
     var photoURL: URL?
     var uid: String?
+    
+    var occupied = false
+    var occupant: String?
+    var occupantDisplayImageUrl: String?
+    var occupantUid: String?
 }

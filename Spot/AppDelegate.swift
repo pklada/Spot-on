@@ -16,13 +16,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     var window: UIWindow?
     
     func configureAppBgdColor() {
-        let color = AppState.sharedInstance.getColorForState()
-        var bgdColor = UIColor()
+        var color = AppState.sharedInstance.getColorForState()
+        var bgdColor = UIColor.white
         
-        bgdColor = UIColor.blend(color1: color, intensity1: 0.1, color2: UIColor.white, intensity2: 1)
+        if let color = color {
+            bgdColor = UIColor.blend(color1: color, intensity1: 0.1, color2: UIColor.white, intensity2: 1)
+        } else {
+            color = Constants.Colors.darkGray
+        }
         
         UIView.animate(withDuration: 0.2, delay: 0, options:.curveEaseInOut, animations: {
             UIApplication.shared.keyWindow?.rootViewController?.view.backgroundColor = bgdColor
+            self.window?.rootViewController?.childViewControllers.last?.tabBarController?.tabBar.tintColor = color
         }, completion:nil)
     }
 

@@ -26,7 +26,21 @@ class SecondViewController: UIViewController, GIDSignInUIDelegate, GIDSignInDele
         self.attemptSignIn();
         self.configureUI()
     }
-
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        DatabaseHelpers.sharedInstance.configureDatabaseWithCallback(onDatabaseChange: {state in
+            let app = UIApplication.shared.delegate as! AppDelegate
+            app.configureAppBgdColor()
+        })
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        DatabaseHelpers.sharedInstance.removeListener()
+    }
     
     func attemptSignIn(forward: Bool = false) {
         if let user = AccountHelpers.getCurrentUser() {
@@ -68,12 +82,15 @@ class SecondViewController: UIViewController, GIDSignInUIDelegate, GIDSignInDele
             self.mainLabel.text = "Sign in"
             self.avatarView.isHidden = true
             self.infoLabel.text = "Sign in to claim the spot!"
+            app.configureAppBgdColor()
         }
         
         self.view.backgroundColor = UIColor.clear
         self.signOutButton.setupForSecondary()
         
-        app.configureAppBgdColor()
+        DatabaseHelpers.sharedInstance.singleRefresh(onDatabaseRefresh: {state in
+            app.configureAppBgdColor()
+        })
     }
 
     override func didReceiveMemoryWarning() {

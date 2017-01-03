@@ -22,55 +22,62 @@ class FirstViewController: UIViewController {
     @IBOutlet weak var flagImageView: UIImageView!
     @IBOutlet weak var openViewBgd: UIView!
     
-    var ref: FIRDatabaseReference!
-    fileprivate var _refHandle: FIRDatabaseHandle!
-    var spots: [FIRDataSnapshot]! = []
-    var occupied: Bool? = nil
-    var occupantUid: String? = nil
-    var occupant: String? = nil
-    var occupantDisplayImageUrl: String? = nil
-    var occupantSectionVisible: Bool = false
+    var occupiedViewVisible: Bool!
     
     enum OccupiedSectionAnimationDirection {
-        case Initial
         case In
         case Out
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.animateOccupantSection(direction: .Initial)
         self.initView()
-        self.configureDatabase()
     }
     
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        DatabaseHelpers.sharedInstance.configureDatabaseWithCallback(onDatabaseChange: {state in
+            self.configureUIForState(state: state)
+        })
+        
         if (AccountHelpers.getCurrentUser() != nil) {
             self.configureUIForState(state: .Checking)
         } else {
-            self.configureUIForState(state: .LoggedOut)
+            self.configureUIForState(state: .NoAuth)
         }
         
         if(AppState.sharedInstance.signedIn) {
-            self.configureDatabase()
+            self.singleRefresh()
         }
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        DatabaseHelpers.sharedInstance.removeListener()
+        
+    }
+    
+    deinit {
+        DatabaseHelpers.sharedInstance.removeListener()
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+
     
     func configureUIForState(state: AppState.SpotState) {
+        let currentState = AppState.sharedInstance.spotState
+        let desiredState = state
         
         switch state {
         case .Checking:
             self.openLabel.text = "Checking..."
             self.openViewLabel.text = ""
+            self.emojiLabel.isHidden = false
             self.emojiLabel.text = "🤔"
             self.openView.backgroundColor = UIColor.lightGray
             self.animateSpotForPending()
@@ -79,8 +86,8 @@ class FirstViewController: UIViewController {
             self.openLabel.text = "Occupied. Darn."
             self.openLabel.textColor = Constants.Colors.red
             self.openViewLabel.text = ""
-            self.occupiedLabel.text = occupant
-            if let imgUrl = occupantDisplayImageUrl {
+            self.occupiedLabel.text = AppState.sharedInstance.occupant
+            if let imgUrl = AppState.sharedInstance.occupantDisplayImageUrl {
                 self.occupantAvatarView.setImage(url: "\(imgUrl)")
             }
             self.emojiLabel.text = "☹️"
@@ -109,7 +116,7 @@ class FirstViewController: UIViewController {
             self.tabBarController?.tabBar.tintColor = Constants.Colors.blue
             self.animateSpotForDefault()
             
-        case .LoggedOut:
+        case .NoAuth:
             self.openLabel.text = "Hey! You need to login first!"
             self.emojiLabel.isHidden = true
             self.openLabel.textColor = UIColor.lightGray
@@ -126,18 +133,16 @@ class FirstViewController: UIViewController {
             self.animateSpotForDefault()
         }
         
-        let app = UIApplication.shared.delegate as! AppDelegate
         AppState.sharedInstance.setState(state: state)
-        
-        self.animateOccupantSection()
-        self.configureBackgroundColor()
+        self.animateOccupantSection(desiredState: desiredState, currentState: currentState)
+        self.configureUIColors()
     }
     
     func initView () {
         if (AccountHelpers.getCurrentUser() != nil) {
             self.configureUIForState(state: .Checking)
         } else {
-            self.configureUIForState(state: .LoggedOut)
+            self.configureUIForState(state: .NoAuth)
         }
         self.openView.layer.cornerRadius = self.openView.frame.size.width / 2
         self.occupiedView.layer.cornerRadius = 3
@@ -158,54 +163,19 @@ class FirstViewController: UIViewController {
         
         self.view.backgroundColor = UIColor.clear
         
-    }
-    
-    func readDatabaseValue(value: NSDictionary) {
-        let occupant = value["occupant"] as? String ?? ""
-        let occupied = value["occupied"] as! Bool
-        let occupantUid = value["occupant_uid"] as? String ?? ""
-        let occupantDiplayImageUrl = value["occupant_display_image"] as? String ?? nil
-        self.occupied = occupied
-        self.occupantUid = occupantUid
-        self.occupant = occupant
-        self.occupantDisplayImageUrl = occupantDiplayImageUrl
+        self.hideOccupantSection()
         
-        var state = AppState.SpotState.Open
-        
-        if occupied {
-            if occupantUid == AppState.sharedInstance.uid {
-                state = .Owned
-            } else {
-                state = .Occupied
-            }
-        } else {
-            state = .Open
-        }
-        
-        self.configureUIForState(state: state)
-    }
-    
-    func configureDatabase() {
-        self.ref = FIRDatabase.database().reference()
-        
-        _refHandle = ref.child("spots").child("1").observe(FIRDataEventType.value, with: { (snapshot) in
-            //let postDict = snapshot.value as? [String : AnyObject] ?? [:]
-            self.readDatabaseValue(value: snapshot.value as! NSDictionary)
-        })
     }
     
     func singleRefresh() {
         self.configureUIForState(state: .Checking)
-        
-        ref.child("spots").child("1").observeSingleEvent(of: .value, with: { (snapshot) in
-            self.readDatabaseValue(value: snapshot.value as! NSDictionary)
-        }) { (error) in
-            //self.openLabel.text = error.localizedDescription
-        }
+        DatabaseHelpers.sharedInstance.singleRefresh(onDatabaseRefresh: {state in
+            self.configureUIForState(state: state)
+        })
     }
     
     func relinquishSpot() {
-        self.ref.child("spots").child("1").setValue([
+        DatabaseHelpers.sharedInstance.ref.child("spots").child("1").setValue([
             "occupant": nil,
             "occupied": false,
             "occupant_uid": nil,
@@ -222,7 +192,7 @@ class FirstViewController: UIViewController {
             mdata["occupant_display_image"] = photoUrl.absoluteString
         }
         print(mdata)
-        self.ref.child("spots").child("1").setValue(mdata)
+        DatabaseHelpers.sharedInstance.ref.child("spots").child("1").setValue(mdata)
     }
     
     
@@ -232,13 +202,13 @@ class FirstViewController: UIViewController {
             return
         }
         
-        if let isOccupied = self.occupied {
-            if (isOccupied && self.occupantUid == AppState.sharedInstance.uid) {
+        if AppState.sharedInstance.occupied {
+            if (AppState.sharedInstance.occupied && AppState.sharedInstance.occupantUid == AppState.sharedInstance.uid) {
                 let overlay = OverlayView.init(title: "Relinquish spot?", body: "If you leave the spot, its up for grabs.", confirmCallback: {
                     self.relinquishSpot()
                 })
                 self.view.addSubview(overlay)
-            } else if(isOccupied) {
+            } else if(AppState.sharedInstance.occupied) {
                 singleRefresh()
             } else {
                 claimSpot()
@@ -248,39 +218,45 @@ class FirstViewController: UIViewController {
         }
     }
     
-    func animateOccupantSection(direction: OccupiedSectionAnimationDirection = .In) {
-        var direction = direction
+    func hideOccupantSection() {
+        self.occupiedViewVisible = false
+        
+        let distance = self.occupiedView.frame.size.height + 16 + self.tabBarController!.tabBar.frame.size.height
+        self.occupiedView.layer.transform = CATransform3DMakeTranslation(0, distance, 0)
+    }
+    
+    func animateOccupantSection(desiredState: AppState.SpotState, currentState: AppState.SpotState) {
+        var direction = OccupiedSectionAnimationDirection.In
         let anim = POPSpringAnimation.init(propertyNamed: kPOPLayerTranslationY)
         let distance = self.occupiedView.frame.size.height + 16 + self.tabBarController!.tabBar.frame.size.height
         var key = String()
         
-        if AppState.sharedInstance.spotState == .Checking {
+        let statesIn = [AppState.SpotState.Occupied, AppState.SpotState.Owned]
+        let statesOut = [AppState.SpotState.Default, AppState.SpotState.NoAuth, AppState.SpotState.Open]
+        
+        if desiredState == .Checking {
             return
         }
         
-        if AppState.sharedInstance.spotState == .Open || AppState.sharedInstance.spotState == .LoggedOut {
-            direction = .Out
-        }
-        
-        if ((direction == .In && self.occupantSectionVisible) || (direction == .Out && !self.occupantSectionVisible)) {
+        if self.occupiedViewVisible && statesOut.contains(desiredState) {
+            direction = OccupiedSectionAnimationDirection.Out
+        } else if !self.occupiedViewVisible && statesIn.contains(desiredState) {
+            direction = OccupiedSectionAnimationDirection.In
+        } else {
             return
         }
         
         switch direction {
-        case .Initial:
-            anim?.toValue = distance
-            anim?.fromValue = distance
-            self.occupantSectionVisible = false
         case .In:
             anim?.fromValue = distance
             anim?.toValue = 0
             key = "moveIn"
-            self.occupantSectionVisible = true
+            self.occupiedViewVisible = true
         case .Out:
             anim?.fromValue = 0
             anim?.toValue = distance
             key = "moveOut"
-            self.occupantSectionVisible = false
+            self.occupiedViewVisible = false
         }
         
         anim?.springBounciness = 6
@@ -313,17 +289,19 @@ class FirstViewController: UIViewController {
     }
 
     
-    func configureBackgroundColor() {
-        var color = UIColor()
+    func configureUIColors() {
+        var color = AppState.sharedInstance.getColorForState()
         var ringColor = UIColor()
         var alertBgdColor = UIColor()
         let app = UIApplication.shared.delegate as! AppDelegate
         app.configureAppBgdColor()
         
-        color = AppState.sharedInstance.getColorForState()
+        if color == nil {
+            color = UIColor.white
+        }
 
-        ringColor = UIColor.blend(color1: color, intensity1: 0.2, color2: UIColor.white, intensity2: 1)
-        alertBgdColor = UIColor.blend(color1: color, intensity1: 0.15, color2: Constants.Colors.darkGray, intensity2: 1)
+        ringColor = UIColor.blend(color1: color!, intensity1: 0.2, color2: UIColor.white, intensity2: 1)
+        alertBgdColor = UIColor.blend(color1: color!, intensity1: 0.15, color2: Constants.Colors.darkGray, intensity2: 1)
         
         
         UIView.animate(withDuration: 0.2, delay: 0, options:.curveEaseInOut, animations: {
