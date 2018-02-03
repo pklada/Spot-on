@@ -14,7 +14,10 @@ class OverlayView: UIView {
     
     var confirmCallback: ((Void) -> Void)?
     
-    @IBOutlet var view: UIView!
+    // loaded from NIB
+    private weak var view: UIView!
+    
+    @IBOutlet var overlayView: UIView!
     @IBOutlet var titleLabel: UILabel!
     @IBOutlet var bodyLabel: UILabel!
     @IBOutlet var primaryButton: Button!
@@ -24,6 +27,8 @@ class OverlayView: UIView {
     let margin = 16
     var title = String()
     var body = String()
+    var shouldUpdateConstraints: Bool = true
+    var overlayNeedsDisplay: Bool = true
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -46,16 +51,9 @@ class OverlayView: UIView {
     }
     
     func initialize() {
-        Bundle.main.loadNibNamed("OverlayView", owner: self, options: nil)
+        self.view = Bundle (for: type(of: self)).loadNibNamed(
+            "OverlayView", owner: self, options: nil)! [0] as! UIView
         self.backgroundColor = UIColor.clear
-        self.addSubview(self.view)
-        let x = (Int(UIScreen.main.bounds.width) - self.width) / 2
-        
-        let font = UIFont(name: Constants.Fonts.normal, size: 18.0)
-        let bodyHeight = heightForView(text: self.body, font: font!, width: CGFloat(self.width - 32))
-        let height = 105 + CGFloat(margin * 3) + bodyHeight
-        
-        self.view.frame = CGRect(x: x, y: 230, width: self.width, height: Int(height))
         self.configureUI()
     }
     
@@ -73,21 +71,23 @@ class OverlayView: UIView {
         self.primaryButton.setupForPrimary()
         self.secondaryButton.setupForSecondary()
         
-        self.view.layer.cornerRadius = CGFloat(Constants.Dimens.cornerRadius)
-        self.view.layer.shadowColor = UIColor.black.cgColor
-        self.view.layer.shadowOffset = CGSize(width: 0, height: 4)
-        self.view.layer.shadowRadius = 12
-        self.view.layer.shadowOpacity = 0.25
-        self.view.clipsToBounds = false
+        self.overlayView.layer.cornerRadius = CGFloat(Constants.Dimens.cornerRadius)
+        self.overlayView.layer.shadowColor = UIColor.black.cgColor
+        self.overlayView.layer.shadowOffset = CGSize(width: 0, height: 4)
+        self.overlayView.layer.shadowRadius = 12
+        self.overlayView.layer.shadowOpacity = 0.25
+        self.overlayView.clipsToBounds = false
         
-        self.displayShim()
-        self.displayOverlay()
+        self.overlayView.invalidateIntrinsicContentSize()
+        self.overlayView.translatesAutoresizingMaskIntoConstraints = false
+        
+        self.addSubview(self.overlayView)
     }
     
     func displayOverlay() {
-        let toValue = CGRect(x: self.view.frame.origin.x, y: self.view.frame.origin.y, width: self.view.frame.size.width, height: self.view.frame.size.height)
-        let fromValue = CGRect(x: self.view.frame.origin.x, y: self.view.frame.origin.y + 50, width: self.view.frame.size.width, height: self.view.frame.size.height)
-        AnimationHelper.createSpringAnimation(property: kPOPViewFrame, toValue: toValue, fromValue: fromValue, target: self.view, keyName: "displayOverlay")
+        let toValue = CGRect(x: self.overlayView.frame.origin.x, y: self.overlayView.frame.origin.y, width: self.overlayView.frame.size.width, height: self.overlayView.frame.size.height)
+        let fromValue = CGRect(x: self.overlayView.frame.origin.x, y: self.overlayView.frame.origin.y + 50, width: self.overlayView.frame.size.width, height: self.overlayView.frame.size.height)
+        AnimationHelper.createSpringAnimation(property: kPOPViewFrame, toValue: toValue, fromValue: fromValue, target: self.overlayView, keyName: "displayOverlay")
         
         UIView.animate(withDuration: 0.2, animations: {
             self.alpha = 1
@@ -95,9 +95,9 @@ class OverlayView: UIView {
     }
     
     func hideOverlay() {
-        let toValue = CGRect(x: self.view.frame.origin.x, y: self.view.frame.origin.y + 50, width: self.view.frame.size.width, height: self.view.frame.size.height)
-        let fromValue = CGRect(x: self.view.frame.origin.x, y: self.view.frame.origin.y, width: self.view.frame.size.width, height: self.view.frame.size.height)
-        AnimationHelper.createSpringAnimation(property: kPOPViewFrame, toValue: toValue, fromValue: fromValue, target: self.view, springSpeed: 6, keyName: "hideOverlay")
+        let toValue = CGRect(x: self.overlayView.frame.origin.x, y: self.overlayView.frame.origin.y + 50, width: self.overlayView.frame.size.width, height: self.overlayView.frame.size.height)
+        let fromValue = CGRect(x: self.overlayView.frame.origin.x, y: self.overlayView.frame.origin.y, width: self.overlayView.frame.size.width, height: self.overlayView.frame.size.height)
+        AnimationHelper.createSpringAnimation(property: kPOPViewFrame, toValue: toValue, fromValue: fromValue, target: self.overlayView, springSpeed: 6, keyName: "hideOverlay")
         
         UIView.animate(withDuration: 0.2, animations: {
             self.alpha = 0
@@ -127,17 +127,26 @@ class OverlayView: UIView {
 
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        self.bodyLabel.preferredMaxLayoutWidth = self.bodyLabel.frame.size.width;
-        self.view.layoutIfNeeded()
-        super.layoutSubviews()
+    override func updateConstraints() {
+        if (shouldUpdateConstraints) {
+            NSLayoutConstraint(item: self.overlayView, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0).isActive = true
+            NSLayoutConstraint(item: self.overlayView, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0).isActive = true
+            NSLayoutConstraint(item: self.overlayView, attribute: .width, relatedBy: .lessThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: CGFloat(self.width)).isActive = true
+            shouldUpdateConstraints = false
+        }
+        
+        super.updateConstraints()
     }
     
-    override func didAddSubview(_ subview: UIView) {
-        super.didAddSubview(subview)
-        self.bodyLabel.preferredMaxLayoutWidth = self.bodyLabel.frame.size.width;
-        self.view.layoutIfNeeded()
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.overlayView.layoutIfNeeded()
+        
+        if (overlayNeedsDisplay) {
+            self.displayOverlay()
+            self.displayShim()
+            overlayNeedsDisplay = false
+        }
         super.layoutSubviews()
     }
     

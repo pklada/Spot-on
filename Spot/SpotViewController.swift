@@ -22,7 +22,8 @@ class FirstViewController: UIViewController {
     @IBOutlet weak var flagImageView: UIImageView!
     @IBOutlet weak var openViewBgd: UIView!
     
-    var occupiedViewVisible: Bool!
+    var occupiedViewVisible: Bool! = false
+    var rings = [Ring]()
     
     enum OccupiedSectionAnimationDirection {
         case In
@@ -66,6 +67,78 @@ class FirstViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    class Ring: UIView {
+        
+        var callback: ((Ring) -> Void)?
+        
+        required init?(coder aDecoder: NSCoder) {
+            super.init(coder: aDecoder)
+        }
+
+        override init(frame: CGRect) {
+            super.init(frame: frame)
+            
+            self.setupRing()
+        }
+        
+        convenience init(frame: CGRect, callback: ((Ring) -> Void)?)  {
+            self.init(frame: frame)
+            if let callback = callback {
+                self.callback = callback
+            }
+        }
+        
+        func setupRing() {
+            self.layer.cornerRadius = self.frame.size.width / 2
+            var color = AppState.sharedInstance.getColorForState()
+            
+            if color == nil {
+                color = UIColor.white
+            }
+            
+            self.setRingColor(color: color!)
+            self.backgroundColor = UIColor.clear
+            self.layer.borderWidth = 0
+            self.positionRingInitial()
+        }
+        
+        func positionRingInitial() {
+            UIView.animate(withDuration: 0.2, delay: 0, options:.curveLinear, animations: {
+                self.alpha = 1
+                self.layer.borderWidth = 2
+            }, completion: nil)
+        }
+        
+        func fireRing() {
+            let anim = POPDecayAnimation.init(propertyNamed: kPOPViewScaleXY)
+            anim?.velocity = CGSize(width: 2, height: 2)
+            let duration = anim?.duration
+            self.pop_add(anim, forKey: "ringSizeUp")
+            
+            UIView.animate(withDuration: duration!, delay: 0, options:.curveLinear, animations: {
+                self.alpha = 0
+                self.layer.borderWidth = 5
+            }, completion: { finished in
+                self.remove()
+            })
+        }
+        
+        func setRingColor(color: UIColor) {
+            let ringColor = UIColor.blend(color1: color, intensity1: 0.2, color2: UIColor.white, intensity2: 1)
+            
+            UIView.animate(withDuration: 0.2, delay: 0, options:.curveEaseInOut, animations: {
+                self.layer.borderColor = ringColor.cgColor
+            }, completion:nil)
+        }
+        
+        func remove() {
+            if let callback = self.callback {
+                callback(self)
+            }
+            self.removeFromSuperview()
+        }
     }
 
     
@@ -153,17 +226,21 @@ class FirstViewController: UIViewController {
         self.openView.layer.shadowRadius = 24
         self.openView.layer.shadowOpacity = 0.25
         
+        self.openViewBgd.backgroundColor = UIColor.clear
+        
         let flagImage = UIImage(named: "ic_flag")?.withRenderingMode(.alwaysTemplate)
         self.flagImageView.image = flagImage
         self.flagImageView.tintColor = UIColor.white.withAlphaComponent(0.6)
         
         self.occupantAvatarView.setShadow(size: CGSize(width: 0, height: 1), opacity: 0.2, radius: 2)
         
-        self.openViewBgd.layer.cornerRadius = self.openViewBgd.frame.size.width / 2
-        
         self.view.backgroundColor = UIColor.clear
         
         self.hideOccupantSection()
+        
+        if (self.rings.count == 0) {
+            self.initRing()
+        }
         
     }
     
@@ -191,12 +268,24 @@ class FirstViewController: UIViewController {
         if let photoUrl = AppState.sharedInstance.photoURL {
             mdata["occupant_display_image"] = photoUrl.absoluteString
         }
-        print(mdata)
         DatabaseHelpers.sharedInstance.ref.child("spots").child("1").setValue(mdata)
     }
     
+    func initRing() {
+        let ring = Ring.init(frame: openViewBgd.bounds, callback: {r in
+            self.rings.removeLast()
+            if (self.rings.count == 0) {
+                self.initRing()
+            }
+        })
+        
+        openViewBgd.addSubview(ring)
+        self.rings.append(ring)
+    }
     
     func openViewPressed() {
+        
+        self.rings.last?.fireRing()
         
         if AccountHelpers.getCurrentUser() == nil {
             return
@@ -226,10 +315,10 @@ class FirstViewController: UIViewController {
     }
     
     func animateOccupantSection(desiredState: AppState.SpotState, currentState: AppState.SpotState) {
-        var direction: OccupiedSectionAnimationDirection
+        var direction: OccupiedSectionAnimationDirection = .In
         let anim = POPSpringAnimation.init(propertyNamed: kPOPLayerTranslationY)
         let distance = self.occupiedView.frame.size.height + 16 + self.tabBarController!.tabBar.frame.size.height
-        var key: String
+        var key = String()
         
         let statesIn = [AppState.SpotState.Occupied, AppState.SpotState.Owned]
         let statesOut = [AppState.SpotState.Default, AppState.SpotState.NoAuth, AppState.SpotState.Open]
@@ -291,7 +380,6 @@ class FirstViewController: UIViewController {
     
     func configureUIColors() {
         var color = AppState.sharedInstance.getColorForState()
-        var ringColor = UIColor()
         var alertBgdColor = UIColor()
         let app = UIApplication.shared.delegate as! AppDelegate
         app.configureAppBgdColor()
@@ -300,46 +388,17 @@ class FirstViewController: UIViewController {
             color = UIColor.white
         }
 
-        ringColor = UIColor.blend(color1: color!, intensity1: 0.2, color2: UIColor.white, intensity2: 1)
+        for (_, element) in self.rings.enumerated() {
+            element.setRingColor(color: color!)
+        }
+        
         alertBgdColor = UIColor.blend(color1: color!, intensity1: 0.15, color2: Constants.Colors.darkGray, intensity2: 1)
         
-        
         UIView.animate(withDuration: 0.2, delay: 0, options:.curveEaseInOut, animations: {
-            self.openViewBgd.backgroundColor = UIColor.clear
-            self.openViewBgd.layer.borderColor = ringColor.cgColor
-            self.openViewBgd.layer.borderWidth = 2
             self.occupiedView.backgroundColor = alertBgdColor
         }, completion:nil)
     }
-    
-    func animateRing() {
-        // check if it exists already
-        let animExisting = self.openViewBgd.pop_animation(forKey: "ringSizeUp") as? POPDecayAnimation
-        if animExisting != nil {
-            return
-        }
-        
-        let anim = POPDecayAnimation.init(propertyNamed: kPOPViewScaleXY)
-        //anim?.toValue = NSValue(cgPoint: CGPoint(x: 1.08, y: 1.08))
-        anim?.velocity = CGSize(width: 2, height: 2)
-        let duration = anim?.duration
-        self.openViewBgd.pop_add(anim, forKey: "ringSizeUp")
-        
-        UIView.animate(withDuration: duration!, delay: 0, options:.curveLinear, animations: {
-            self.openViewBgd.alpha = 0
-        }, completion: { finished in
-            self.returnRing()
-        })
-    }
-    
-    func returnRing() {
-        self.openViewBgd.pop_removeAllAnimations()
-        self.openViewBgd.transform = CGAffineTransform(scaleX: 1, y: 1)
-        UIView.animate(withDuration: 0.2, delay: 0, options:.curveLinear, animations: {
-            self.openViewBgd.alpha = 1
-        })
-    }
-    
+
     @IBAction func openViewTapped() {
         openViewPressed()
     }
@@ -350,7 +409,6 @@ class FirstViewController: UIViewController {
         }
         
         self.animateSpotForDefault()
-        self.animateRing()
     }
     
     @IBAction func openViewTouchedDown() {

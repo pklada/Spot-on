@@ -88,9 +88,9 @@ class SecondViewController: UIViewController, GIDSignInUIDelegate, GIDSignInDele
         self.view.backgroundColor = UIColor.clear
         self.signOutButton.setupForSecondary()
         
-        DatabaseHelpers.sharedInstance.singleRefresh(onDatabaseRefresh: {state in
+        DatabaseHelpers.sharedInstance.singleRefresh {state in
             app.configureAppBgdColor()
-        })
+        }
     }
 
     override func didReceiveMemoryWarning() {
