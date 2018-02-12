@@ -6,14 +6,27 @@
 //  Copyright © 2016 Peter. All rights reserved.
 //
 
+import Foundation
 import UIKit
 import Firebase
 import GoogleSignIn
+import CoreLocation
+import UserNotifications
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 
     var window: UIWindow?
+    var locationManager: CLLocationManager!
+    var notificationCenter: UNUserNotificationCenter!
+    var tabBarController: UITabBarController!
+    
+    var modelController: SpotModelController!
+    
+    enum SpotActionTypes {
+        case Exit
+        case Enter
+    }
     
     func configureAppBgdColor() {
         var color = AppState.sharedInstance.getColorForState()
@@ -33,19 +46,81 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        
+        self.locationManager = CLLocationManager()
+        self.notificationCenter = UNUserNotificationCenter.current()
+        
+        self.modelController = SpotModelController()
+        if let tbc = self.window?.rootViewController as? SpotTabBarController {
+            tbc.modelController = self.modelController
+        }
+        
+        setupNoficationCenter()
+        
         // Override point for customization after application launch.
         FIRApp.configure()
         
         GIDSignIn.sharedInstance().delegate = self
+        self.locationManager.delegate = self
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        self.notificationCenter.delegate = self
+        
         GIDSignIn.sharedInstance().clientID = FIRApp.defaultApp()?.options.clientID
         
         if let user = AccountHelpers.getCurrentUser() {
-            AccountHelpers.signIn(user)
+            AccountHelpers.signIn(user, spotModel: self.modelController)
         }
         
         UITabBar.appearance().tintColor = UIColor.darkGray
         
+        enableLocationServices()
+        
+        let options: UNAuthorizationOptions = [.alert, .sound]
+        self.notificationCenter?.requestAuthorization(options: options) { (granted, error) in
+            if !granted {
+                print("Permission not granted")
+            }
+        }
+        
         return true
+    }
+    
+    func setupGeofence() {
+        let geofenceRegionCenter = CLLocationCoordinate2DMake(AppState.sharedInstance.locationPointLat, AppState.sharedInstance.locationPointLong)
+        let geofenceRegion = CLCircularRegion(center: geofenceRegionCenter,
+                                              radius: AppState.sharedInstance.locationFenceRadius,
+                                              identifier: "UniqueIdentifier")
+        
+        geofenceRegion.notifyOnEntry = true
+        geofenceRegion.notifyOnExit = true
+        
+        self.locationManager.startMonitoring(for: geofenceRegion)
+        self.locationManager.requestState(for: geofenceRegion)
+    }
+    
+    func enableLocationServices() {
+        self.locationManager.delegate = self
+        
+        switch CLLocationManager.authorizationStatus() {
+        case .notDetermined:
+            // Request when-in-use authorization initially
+            self.locationManager.requestAlwaysAuthorization()
+            break
+            
+        case .restricted, .denied:
+            // Disable location features
+            break
+            
+        case .authorizedWhenInUse:
+            // Enable basic location features
+            setupGeofence()
+            break
+            
+        case .authorizedAlways:
+            // Enable any of your app's location features
+            setupGeofence()
+            break
+        }
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
@@ -96,3 +171,116 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     }
     
 }
+
+extension AppDelegate: CLLocationManagerDelegate {
+    
+    // called when user Exits a monitored region
+    func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
+        if region is CLCircularRegion {
+            // Do what you want if this information
+            self.handleNotificationAction(type: .Exit)
+        }
+    }
+    
+    // called when user Enters a monitored region
+    func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
+        if region is CLCircularRegion {
+            // Do what you want if this information
+            self.handleNotificationAction(type: .Enter)
+        }
+    }
+    
+    func setupNoficationCenter() {
+        let center = UNUserNotificationCenter.current()
+        // create action buttons
+        let actionLeaveSpot = UNNotificationAction(identifier: "LEAVE_SPOT", title: "Leave Spot", options: [.destructive])
+        let actionTakeSpot = UNNotificationAction(identifier: "TAKE_SPOT", title: "Take Spot", options: [])
+        
+        // define category
+        let exitCategory = UNNotificationCategory(identifier: "EXIT_CATEGORY", actions: [actionLeaveSpot], intentIdentifiers: [], options: [])
+        
+        // define category
+        let enterCategory = UNNotificationCategory(identifier: "ENTER_CATEGORY", actions: [actionTakeSpot], intentIdentifiers: [], options: [])
+        
+        // register category
+        center.setNotificationCategories([exitCategory, enterCategory])
+    }
+    
+    func handleNotificationAction(type: SpotActionTypes) {
+        
+        if (AppState.sharedInstance.spotState == .Owned && type == .Enter) {
+            // if you already own the spot, and you enter again, don't do anything
+            return
+        }
+        
+        if (AppState.sharedInstance.spotState == .Open && type == .Exit) {
+            // if the spot is open and you leave, don't do anything
+            return
+        }
+        
+        if (AppState.sharedInstance.spotState == .Occupied || AppState.sharedInstance.spotState == .NoAuth) {
+            // if someone else is in the spot, you can't do anything so don't do anything
+            // also return if for some reason the user isn't authed
+            return
+        }
+        
+        let center = UNUserNotificationCenter.current()
+        let identifier = "123"
+        let content = UNMutableNotificationContent()
+        content.sound = UNNotificationSound.default()
+        
+        switch type {
+        case .Enter:
+            content.title = "Welcome!"
+            content.body = "You've entered the region. Did you take the spot?"
+            content.categoryIdentifier = "ENTER_CATEGORY"
+        case .Exit:
+            content.title = "Bye!"
+            content.body = "You left the region. Did you give up the spot?"
+            content.categoryIdentifier = "EXIT_CATEGORY"
+        }
+        
+        
+        // the actual trigger object
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5,
+                                                        repeats: false)
+        
+        // the notification request object
+        let request = UNNotificationRequest(identifier: identifier,
+                                            content: content,
+                                            trigger: trigger)
+        
+        
+        // trying to add the notification request to notification center
+        center.add(request, withCompletionHandler: { (error) in
+            if error != nil {
+                print("Error adding notification with identifier: \(identifier)")
+            }
+        })
+    }
+}
+
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        // when app is onpen and in foregroud
+        completionHandler(.alert)
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        let spotHelpers = SpotHelpers()
+        
+        switch response.actionIdentifier {
+        case "LEAVE_SPOT":
+            spotHelpers.relinquishSpot()
+        case "TAKE_SPOT":
+            spotHelpers.claimSpot(spotModel: self.modelController)
+        default:
+            return
+        }
+        
+        completionHandler()
+    }
+    
+}
+

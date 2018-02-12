@@ -13,6 +13,9 @@
 		D0176B431E1491AC00F2F6F4 /* LayoutHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0176B421E1491AC00F2F6F4 /* LayoutHelpers.swift */; };
 		D0176B451E15819200F2F6F4 /* AnimationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0176B441E15819200F2F6F4 /* AnimationHelper.swift */; };
 		D0176B471E17077400F2F6F4 /* DatabaseHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0176B461E17077400F2F6F4 /* DatabaseHelpers.swift */; };
+		D03AAC1F2028E76600BCDD5B /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03AAC1E2028E76500BCDD5B /* MapViewController.swift */; };
+		D03AAC222029246F00BCDD5B /* TestLocations.gpx in Resources */ = {isa = PBXBuildFile; fileRef = D03AAC212029246F00BCDD5B /* TestLocations.gpx */; };
+		D03AAC2420292C7600BCDD5B /* GuidebookLocation.gpx in Resources */ = {isa = PBXBuildFile; fileRef = D03AAC2320292C7600BCDD5B /* GuidebookLocation.gpx */; };
 		D04FE1291E11F1C50021148D /* GoogleToolboxForMac in Frameworks */ = {isa = PBXBuildFile; fileRef = D04FE1281E11F1C40021148D /* GoogleToolboxForMac */; };
 		D04FE12B1E11F5E90021148D /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04FE12A1E11F5E90021148D /* AppState.swift */; };
 		D04FE12D1E11F63A0021148D /* MeasurementHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04FE12C1E11F63A0021148D /* MeasurementHelper.swift */; };
@@ -27,8 +30,11 @@
 		D0BDB15A1E11E6E400FB7BF2 /* SpotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BDB1591E11E6E400FB7BF2 /* SpotTests.swift */; };
 		D0BDB1651E11E6E400FB7BF2 /* SpotUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BDB1641E11E6E400FB7BF2 /* SpotUITests.swift */; };
 		D0BDB1731E11E8C500FB7BF2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D0BDB1721E11E8C500FB7BF2 /* GoogleService-Info.plist */; };
+		D0C03EA22031FAC300E2AD3B /* SpotModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C03EA12031FAC300E2AD3B /* SpotModel.swift */; };
+		D0C03EA42032003500E2AD3B /* SpotTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C03EA32032003500E2AD3B /* SpotTabBarController.swift */; };
 		D0C445611E1231D6000B55F4 /* AvatarView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D0C445601E1231D6000B55F4 /* AvatarView.xib */; };
 		D0C445631E12323C000B55F4 /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C445621E12323C000B55F4 /* AvatarView.swift */; };
+		D0F82B78202B6C8F00B513B9 /* SpotHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F82B77202B6C8F00B513B9 /* SpotHelpers.swift */; };
 		D0FE04D21E12FB0A00892325 /* AccountHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0FE04D11E12FB0A00892325 /* AccountHelpers.swift */; };
 		D0FE04D41E1303DB00892325 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0FE04D31E1303DB00892325 /* Constants.swift */; };
 		D0FE04D81E131A1600892325 /* ic_spot.png in Resources */ = {isa = PBXBuildFile; fileRef = D0FE04D51E131A1600892325 /* ic_spot.png */; };
@@ -73,6 +79,10 @@
 		D0176B421E1491AC00F2F6F4 /* LayoutHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LayoutHelpers.swift; sourceTree = "<group>"; };
 		D0176B441E15819200F2F6F4 /* AnimationHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AnimationHelper.swift; path = Spot/AnimationHelper.swift; sourceTree = "<group>"; };
 		D0176B461E17077400F2F6F4 /* DatabaseHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseHelpers.swift; sourceTree = "<group>"; };
+		D03AAC1E2028E76500BCDD5B /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
+		D03AAC202028EAB600BCDD5B /* AppDelegate+CLLocationManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "AppDelegate+CLLocationManagerDelegate.swift"; path = "Spot/AppDelegate+CLLocationManagerDelegate.swift"; sourceTree = "<group>"; };
+		D03AAC212029246F00BCDD5B /* TestLocations.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = TestLocations.gpx; path = Spot/TestLocations.gpx; sourceTree = "<group>"; };
+		D03AAC2320292C7600BCDD5B /* GuidebookLocation.gpx */ = {isa = PBXFileReference; lastKnownFileType = text; name = GuidebookLocation.gpx; path = Spot/GuidebookLocation.gpx; sourceTree = "<group>"; };
 		D04FE1281E11F1C40021148D /* GoogleToolboxForMac */ = {isa = PBXFileReference; lastKnownFileType = folder; name = GoogleToolboxForMac; path = Pods/GoogleToolboxForMac; sourceTree = "<group>"; };
 		D04FE12A1E11F5E90021148D /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		D04FE12C1E11F63A0021148D /* MeasurementHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeasurementHelper.swift; sourceTree = "<group>"; };
@@ -93,8 +103,11 @@
 		D0BDB1641E11E6E400FB7BF2 /* SpotUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotUITests.swift; sourceTree = "<group>"; };
 		D0BDB1661E11E6E400FB7BF2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D0BDB1721E11E8C500FB7BF2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		D0C03EA12031FAC300E2AD3B /* SpotModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpotModel.swift; path = Spot/SpotModel.swift; sourceTree = "<group>"; };
+		D0C03EA32032003500E2AD3B /* SpotTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpotTabBarController.swift; path = Spot/SpotTabBarController.swift; sourceTree = "<group>"; };
 		D0C445601E1231D6000B55F4 /* AvatarView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AvatarView.xib; sourceTree = "<group>"; };
 		D0C445621E12323C000B55F4 /* AvatarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
+		D0F82B77202B6C8F00B513B9 /* SpotHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpotHelpers.swift; path = Spot/SpotHelpers.swift; sourceTree = "<group>"; };
 		D0FE04D11E12FB0A00892325 /* AccountHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountHelpers.swift; sourceTree = "<group>"; };
 		D0FE04D31E1303DB00892325 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		D0FE04D51E131A1600892325 /* ic_spot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ic_spot.png; path = Resources/Images/ic_spot.png; sourceTree = "<group>"; };
@@ -158,6 +171,12 @@
 		D0BDB1361E11E6E300FB7BF2 = {
 			isa = PBXGroup;
 			children = (
+				D0C03EA32032003500E2AD3B /* SpotTabBarController.swift */,
+				D0C03EA12031FAC300E2AD3B /* SpotModel.swift */,
+				D0F82B77202B6C8F00B513B9 /* SpotHelpers.swift */,
+				D03AAC2320292C7600BCDD5B /* GuidebookLocation.gpx */,
+				D03AAC212029246F00BCDD5B /* TestLocations.gpx */,
+				D03AAC202028EAB600BCDD5B /* AppDelegate+CLLocationManagerDelegate.swift */,
 				D0176B441E15819200F2F6F4 /* AnimationHelper.swift */,
 				D0BDB1411E11E6E300FB7BF2 /* Spot */,
 				D0BDB1581E11E6E400FB7BF2 /* SpotTests */,
@@ -181,6 +200,7 @@
 		D0BDB1411E11E6E300FB7BF2 /* Spot */ = {
 			isa = PBXGroup;
 			children = (
+				D03AAC1E2028E76500BCDD5B /* MapViewController.swift */,
 				D0FE04D11E12FB0A00892325 /* AccountHelpers.swift */,
 				D0BDB1461E11E6E300FB7BF2 /* AccountViewController.swift */,
 				D0BDB1421E11E6E300FB7BF2 /* AppDelegate.swift */,
@@ -374,6 +394,7 @@
 				D0FE04E11E131AD800892325 /* ic_gear@3x.png in Resources */,
 				D0FE04E71E13541400892325 /* ic_flag@3x.png in Resources */,
 				D0FE04DF1E131AD800892325 /* ic_gear.png in Resources */,
+				D03AAC2420292C7600BCDD5B /* GuidebookLocation.gpx in Resources */,
 				D0FE04E01E131AD800892325 /* ic_gear@2x.png in Resources */,
 				D0BDB14F1E11E6E300FB7BF2 /* LaunchScreen.storyboard in Resources */,
 				D0FE04D81E131A1600892325 /* ic_spot.png in Resources */,
@@ -381,6 +402,7 @@
 				D0FE04ED1E14547300892325 /* OverlayView.xib in Resources */,
 				D0BDB14C1E11E6E300FB7BF2 /* Assets.xcassets in Resources */,
 				D0FE04D91E131A1600892325 /* ic_spot@2x.png in Resources */,
+				D03AAC222029246F00BCDD5B /* TestLocations.gpx in Resources */,
 				D0FE04DA1E131A1600892325 /* ic_spot@3x.png in Resources */,
 				D0C445611E1231D6000B55F4 /* AvatarView.xib in Resources */,
 				D0BDB14A1E11E6E300FB7BF2 /* Main.storyboard in Resources */,
@@ -551,18 +573,22 @@
 				D0BDB1471E11E6E300FB7BF2 /* AccountViewController.swift in Sources */,
 				D04FE12D1E11F63A0021148D /* MeasurementHelper.swift in Sources */,
 				D0FE04E91E135BB000892325 /* UIColor+extras.swift in Sources */,
+				D0C03EA42032003500E2AD3B /* SpotTabBarController.swift in Sources */,
+				D0C03EA22031FAC300E2AD3B /* SpotModel.swift in Sources */,
 				D0C445631E12323C000B55F4 /* AvatarView.swift in Sources */,
 				D0FE04EB1E14546900892325 /* OverlayView.swift in Sources */,
 				D0BDB1431E11E6E300FB7BF2 /* AppDelegate.swift in Sources */,
 				D0BDB1451E11E6E300FB7BF2 /* SpotViewController.swift in Sources */,
 				D096F36E1E1485E3006F9661 /* Button.swift in Sources */,
 				D0176B451E15819200F2F6F4 /* AnimationHelper.swift in Sources */,
+				D0F82B78202B6C8F00B513B9 /* SpotHelpers.swift in Sources */,
 				D04FE12B1E11F5E90021148D /* AppState.swift in Sources */,
 				D04FE12F1E122EF80021148D /* UIImageView+Extras.swift in Sources */,
 				D0FE04D21E12FB0A00892325 /* AccountHelpers.swift in Sources */,
 				D0176B431E1491AC00F2F6F4 /* LayoutHelpers.swift in Sources */,
 				D0FE04D41E1303DB00892325 /* Constants.swift in Sources */,
 				D0176B471E17077400F2F6F4 /* DatabaseHelpers.swift in Sources */,
+				D03AAC1F2028E76600BCDD5B /* MapViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

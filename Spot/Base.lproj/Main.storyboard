@@ -177,10 +177,45 @@
             </objects>
             <point key="canvasLocation" x="749.60000000000002" y="-320.68965517241384"/>
         </scene>
+        <!--Map-->
+        <scene sceneID="of8-qL-IoG">
+            <objects>
+                <viewController id="AFJ-WO-1qm" customClass="MapViewController" customModule="Spot" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="nbe-6S-jn7"/>
+                        <viewControllerLayoutGuide type="bottom" id="fP7-Up-J5b"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="0cN-Ro-a9G">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="yg5-KX-3xX">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                            </mapView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="yg5-KX-3xX" firstAttribute="centerX" secondItem="0cN-Ro-a9G" secondAttribute="centerX" id="0Mc-98-suM"/>
+                            <constraint firstItem="yg5-KX-3xX" firstAttribute="leading" secondItem="0cN-Ro-a9G" secondAttribute="leading" id="8iF-71-83w"/>
+                            <constraint firstItem="yg5-KX-3xX" firstAttribute="top" secondItem="nbe-6S-jn7" secondAttribute="bottom" constant="-20" id="JLI-EO-ghZ"/>
+                            <constraint firstItem="yg5-KX-3xX" firstAttribute="centerY" secondItem="0cN-Ro-a9G" secondAttribute="centerY" id="NnQ-Gd-yhY"/>
+                            <constraint firstAttribute="trailing" secondItem="yg5-KX-3xX" secondAttribute="trailing" id="PIW-Lg-N0e"/>
+                            <constraint firstItem="fP7-Up-J5b" firstAttribute="top" secondItem="yg5-KX-3xX" secondAttribute="bottom" constant="-49" id="g9y-Kd-JNw"/>
+                        </constraints>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Map" id="BdY-DQ-6Li"/>
+                    <connections>
+                        <outlet property="mapView" destination="yg5-KX-3xX" id="0y3-3V-qZH"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="VjI-1r-ars" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="749.60000000000002" y="-999.85007496251887"/>
+        </scene>
         <!--Account-->
         <scene sceneID="wg7-f3-ORb">
             <objects>
-                <viewController id="8rJ-Kc-sve" customClass="SecondViewController" customModule="Spot" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="8rJ-Kc-sve" customClass="AccountViewController" customModule="Spot" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="L7p-HK-0SC"/>
                         <viewControllerLayoutGuide type="bottom" id="Djb-ko-YwX"/>
@@ -204,7 +239,7 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rHy-Bi-h6p" customClass="Button" customModule="Spot" customModuleProvider="target">
                                 <rect key="frame" x="87.5" y="536" width="200" height="50"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="200" id="L5N-RO-FDX"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="L5N-RO-FDX"/>
                                     <constraint firstAttribute="height" constant="50" id="dn1-Lq-hiK"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="18"/>
@@ -258,10 +293,10 @@
             </objects>
             <point key="canvasLocation" x="749.60000000000002" y="359.37031484257875"/>
         </scene>
-        <!--Tab Bar Controller-->
+        <!--Spot Tab Bar Controller-->
         <scene sceneID="yl2-sM-qoP">
             <objects>
-                <tabBarController id="49e-Tb-3d3" sceneMemberID="viewController">
+                <tabBarController id="49e-Tb-3d3" customClass="SpotTabBarController" customModule="Spot" customModuleProvider="target" sceneMemberID="viewController">
                     <nil key="simulatedBottomBarMetrics"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="W28-zg-YXA">
                         <rect key="frame" x="0.0" y="975" width="768" height="49"/>
@@ -270,6 +305,7 @@
                     </tabBar>
                     <connections>
                         <segue destination="9pv-A4-QxB" kind="relationship" relationship="viewControllers" id="u7Y-xg-7CH"/>
+                        <segue destination="AFJ-WO-1qm" kind="relationship" relationship="viewControllers" id="pIU-MF-ZsE"/>
                         <segue destination="8rJ-Kc-sve" kind="relationship" relationship="viewControllers" id="lzU-1b-eKA"/>
                     </connections>
                 </tabBarController>

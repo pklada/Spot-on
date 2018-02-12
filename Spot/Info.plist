@@ -49,6 +49,14 @@
 			<false/>
 		</dict>
 	</dict>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Please allow</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Please allow always</string>
+	<key>NSLocationUsageDescription</key>
+	<string>General location description</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Location in use description</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

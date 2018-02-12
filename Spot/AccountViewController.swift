@@ -10,13 +10,15 @@ import UIKit
 import Firebase
 import GoogleSignIn
 
-class SecondViewController: UIViewController, GIDSignInUIDelegate, GIDSignInDelegate {
+class AccountViewController: UIViewController, GIDSignInUIDelegate, GIDSignInDelegate {
     
     @IBOutlet weak var signInButton: GIDSignInButton!
     @IBOutlet weak var signOutButton: Button!
     @IBOutlet weak var mainLabel: UILabel!
     @IBOutlet weak var avatarView: AvatarView!
     @IBOutlet weak var infoLabel: UILabel!
+    
+    var modelController: SpotModelController!
 
     
     override func viewDidLoad() {
@@ -33,7 +35,7 @@ class SecondViewController: UIViewController, GIDSignInUIDelegate, GIDSignInDele
         DatabaseHelpers.sharedInstance.configureDatabaseWithCallback(onDatabaseChange: {state in
             let app = UIApplication.shared.delegate as! AppDelegate
             app.configureAppBgdColor()
-        })
+        }, spotModel: self.modelController)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -64,15 +66,15 @@ class SecondViewController: UIViewController, GIDSignInUIDelegate, GIDSignInDele
     func configureUI() {
         let app = UIApplication.shared.delegate as! AppDelegate
         
-        if(AppState.sharedInstance.signedIn) {
+        if(modelController.user.signedIn) {
             self.signInButton.alpha = 0
             self.signOutButton.alpha = 1
             self.infoLabel.text = "👋"
             
-            self.mainLabel.text = "Hello, \(AppState.sharedInstance.displayName!)"
-            if ((AppState.sharedInstance.photoURL) != nil) {
+            self.mainLabel.text = "Hello, \(modelController.user.displayName!)"
+            if ((modelController.user.photoURL) != nil) {
                 self.avatarView.isHidden = false
-                self.avatarView.setImage(url: "\(AppState.sharedInstance.photoURL!)")
+                self.avatarView.setImage(url: "\(modelController.user.photoURL!)")
                 self.avatarView.setShadow()
             }
             
@@ -88,9 +90,9 @@ class SecondViewController: UIViewController, GIDSignInUIDelegate, GIDSignInDele
         self.view.backgroundColor = UIColor.clear
         self.signOutButton.setupForSecondary()
         
-        DatabaseHelpers.sharedInstance.singleRefresh {state in
+        DatabaseHelpers.sharedInstance.singleRefresh(onDatabaseRefresh: {state in
             app.configureAppBgdColor()
-        }
+        }, spotModel: self.modelController)
     }
 
     override func didReceiveMemoryWarning() {
@@ -100,7 +102,7 @@ class SecondViewController: UIViewController, GIDSignInUIDelegate, GIDSignInDele
     
     func signedOut() {
         let overlay = OverlayView.init(title: "You sure?", body: "We don't like your kind anyway!", confirmCallback: {
-            AccountHelpers.signOut()
+            AccountHelpers.signOut(spotModel: self.modelController)
             self.configureUI()
         })
         
@@ -123,7 +125,7 @@ class SecondViewController: UIViewController, GIDSignInUIDelegate, GIDSignInDele
     }
     
     func signedIn(_ user: FIRUser?) {
-        AccountHelpers.signIn(user)
+        AccountHelpers.signIn(user, spotModel: self.modelController)
         self.configureUI()
     }
      

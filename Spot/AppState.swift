@@ -8,19 +8,11 @@
 
 import Foundation
 import UIKit
+import CoreLocation
 
 class AppState: NSObject {
     
     static let sharedInstance = AppState()
-    
-    enum SpotState {
-        case Default
-        case Checking
-        case Open
-        case Occupied
-        case Owned
-        case NoAuth
-    }
     
     var spotState: SpotState = .Default
     
@@ -47,13 +39,7 @@ class AppState: NSObject {
         return color
     }
     
-    var signedIn = false
-    var displayName: String?
-    var photoURL: URL?
-    var uid: String?
-    
-    var occupied = false
-    var occupant: String?
-    var occupantDisplayImageUrl: String?
-    var occupantUid: String?
+    var locationPointLat: CLLocationDegrees = 37.784282
+    var locationPointLong: CLLocationDegrees = -122.392852
+    var locationFenceRadius: Double = 100
 }

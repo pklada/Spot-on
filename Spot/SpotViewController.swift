@@ -24,6 +24,9 @@ class FirstViewController: UIViewController {
     
     var occupiedViewVisible: Bool! = false
     var rings = [Ring]()
+    var spotHelpers = SpotHelpers()
+    
+    var modelController: SpotModelController!
     
     enum OccupiedSectionAnimationDirection {
         case In
@@ -35,13 +38,12 @@ class FirstViewController: UIViewController {
         self.initView()
     }
     
-    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         DatabaseHelpers.sharedInstance.configureDatabaseWithCallback(onDatabaseChange: {state in
             self.configureUIForState(state: state)
-        })
+        }, spotModel: self.modelController)
         
         if (AccountHelpers.getCurrentUser() != nil) {
             self.configureUIForState(state: .Checking)
@@ -49,7 +51,7 @@ class FirstViewController: UIViewController {
             self.configureUIForState(state: .NoAuth)
         }
         
-        if(AppState.sharedInstance.signedIn) {
+        if(modelController.user.signedIn) {
             self.singleRefresh()
         }
     }
@@ -142,8 +144,8 @@ class FirstViewController: UIViewController {
     }
 
     
-    func configureUIForState(state: AppState.SpotState) {
-        let currentState = AppState.sharedInstance.spotState
+    func configureUIForState(state: SpotState) {
+        let currentState = modelController.spot.state
         let desiredState = state
         
         switch state {
@@ -159,8 +161,8 @@ class FirstViewController: UIViewController {
             self.openLabel.text = "Occupied. Darn."
             self.openLabel.textColor = Constants.Colors.red
             self.openViewLabel.text = ""
-            self.occupiedLabel.text = AppState.sharedInstance.occupant
-            if let imgUrl = AppState.sharedInstance.occupantDisplayImageUrl {
+            self.occupiedLabel.text = modelController.spot.occupant
+            if let imgUrl = modelController.spot.occupantDisplayImageUrl {
                 self.occupantAvatarView.setImage(url: "\(imgUrl)")
             }
             self.emojiLabel.text = "☹️"
@@ -185,7 +187,7 @@ class FirstViewController: UIViewController {
             self.openView.backgroundColor = Constants.Colors.blue
             self.openLabel.textColor = Constants.Colors.blue
             self.openViewLabel.text = ""
-            self.occupantAvatarView.setImage(url: "\(AppState.sharedInstance.photoURL!)")
+            self.occupantAvatarView.setImage(url: "\(modelController.user.photoURL!)")
             self.tabBarController?.tabBar.tintColor = Constants.Colors.blue
             self.animateSpotForDefault()
             
@@ -238,72 +240,45 @@ class FirstViewController: UIViewController {
         
         self.hideOccupantSection()
         
-        if (self.rings.count == 0) {
-            self.initRing()
-        }
-        
     }
     
     func singleRefresh() {
         self.configureUIForState(state: .Checking)
         DatabaseHelpers.sharedInstance.singleRefresh(onDatabaseRefresh: {state in
             self.configureUIForState(state: state)
-        })
-    }
-    
-    func relinquishSpot() {
-        DatabaseHelpers.sharedInstance.ref.child("spots").child("1").setValue([
-            "occupant": nil,
-            "occupied": false,
-            "occupant_uid": nil,
-            "occupant_display_image": nil
-        ])
-    }
-    
-    func claimSpot() {
-        var mdata = [String: Any]()
-        mdata["occupant"] = AppState.sharedInstance.displayName
-        mdata["occupied"] = true
-        mdata["occupant_uid"] = AppState.sharedInstance.uid
-        if let photoUrl = AppState.sharedInstance.photoURL {
-            mdata["occupant_display_image"] = photoUrl.absoluteString
-        }
-        DatabaseHelpers.sharedInstance.ref.child("spots").child("1").setValue(mdata)
+        }, spotModel: self.modelController)
     }
     
     func initRing() {
         let ring = Ring.init(frame: openViewBgd.bounds, callback: {r in
             self.rings.removeLast()
-            if (self.rings.count == 0) {
-                self.initRing()
-            }
         })
         
         openViewBgd.addSubview(ring)
         self.rings.append(ring)
+        ring.fireRing()
     }
     
     func openViewPressed() {
-        
-        self.rings.last?.fireRing()
+        self.initRing()
         
         if AccountHelpers.getCurrentUser() == nil {
             return
         }
         
-        if AppState.sharedInstance.occupied {
-            if (AppState.sharedInstance.occupied && AppState.sharedInstance.occupantUid == AppState.sharedInstance.uid) {
-                let overlay = OverlayView.init(title: "Relinquish spot?", body: "If you leave the spot, its up for grabs.", confirmCallback: {
-                    self.relinquishSpot()
+        if modelController.spot.occupied {
+            if (modelController.spot.occupied && modelController.spot.occupantUid == modelController.user.uid) {
+                let overlay = OverlayView.init(title: "Relinquish spot?", body: "If you leave the spot, it's up for grabs.", confirmCallback: {
+                    self.spotHelpers.relinquishSpot()
                 })
                 self.view.addSubview(overlay)
-            } else if(AppState.sharedInstance.occupied) {
+            } else if(modelController.spot.occupied) {
                 singleRefresh()
             } else {
-                claimSpot()
+                self.spotHelpers.claimSpot(spotModel: self.modelController)
             }
         } else {
-            claimSpot()
+            self.spotHelpers.claimSpot(spotModel: self.modelController)
         }
     }
     
@@ -314,14 +289,14 @@ class FirstViewController: UIViewController {
         self.occupiedView.layer.transform = CATransform3DMakeTranslation(0, distance, 0)
     }
     
-    func animateOccupantSection(desiredState: AppState.SpotState, currentState: AppState.SpotState) {
+    func animateOccupantSection(desiredState: SpotState, currentState: SpotState) {
         var direction: OccupiedSectionAnimationDirection = .In
         let anim = POPSpringAnimation.init(propertyNamed: kPOPLayerTranslationY)
         let distance = self.occupiedView.frame.size.height + 16 + self.tabBarController!.tabBar.frame.size.height
         var key = String()
         
-        let statesIn = [AppState.SpotState.Occupied, AppState.SpotState.Owned]
-        let statesOut = [AppState.SpotState.Default, AppState.SpotState.NoAuth, AppState.SpotState.Open]
+        let statesIn = [SpotState.Occupied, SpotState.Owned]
+        let statesOut = [SpotState.Default, SpotState.NoAuth, SpotState.Open]
         
         if desiredState == .Checking {
             return

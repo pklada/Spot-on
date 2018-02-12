@@ -17,18 +17,18 @@ class DatabaseHelpers: NSObject {
     fileprivate var _refHandle: FIRDatabaseHandle!
     var spots: [FIRDataSnapshot]! = []
     
-    func configureDatabaseWithCallback(onDatabaseChange: @escaping ((AppState.SpotState) -> (Void))) {
+    func configureDatabaseWithCallback(onDatabaseChange: @escaping ((SpotState) -> (Void)), spotModel: SpotModelController) {
         self.ref = FIRDatabase.database().reference()
         
         _refHandle = ref.child("spots").child("1").observe(FIRDataEventType.value, with: { (snapshot) in
-            self.setStateByDatabaseValue(value: snapshot.value as! NSDictionary)
+            self.setStateByDatabaseValue(value: snapshot.value as! NSDictionary, spotModel: spotModel)
             onDatabaseChange(AppState.sharedInstance.spotState)
         })
     }
     
-    func singleRefresh(onDatabaseRefresh: @escaping ((AppState.SpotState) -> (Void))) {
+    func singleRefresh(onDatabaseRefresh: @escaping ((SpotState) -> (Void)), spotModel: SpotModelController) {
         ref.child("spots").child("1").observeSingleEvent(of: .value, with: { (snapshot) in
-            self.setStateByDatabaseValue(value: snapshot.value as! NSDictionary)
+            self.setStateByDatabaseValue(value: snapshot.value as! NSDictionary, spotModel: spotModel)
             onDatabaseRefresh(AppState.sharedInstance.spotState)
         }) { (error) in
             //self.openLabel.text = error.localizedDescription
@@ -39,20 +39,20 @@ class DatabaseHelpers: NSObject {
         ref.child("spots").child("1").removeObserver(withHandle: _refHandle)
     }
     
-    func setStateByDatabaseValue(value: NSDictionary) {
+    func setStateByDatabaseValue(value: NSDictionary, spotModel: SpotModelController) {
         let occupant = value["occupant"] as? String ?? ""
         let occupied = value["occupied"] as! Bool
         let occupantUid = value["occupant_uid"] as? String ?? ""
         let occupantDiplayImageUrl = value["occupant_display_image"] as? String ?? nil
-        AppState.sharedInstance.occupied = occupied
-        AppState.sharedInstance.occupantUid = occupantUid
-        AppState.sharedInstance.occupant = occupant
-        AppState.sharedInstance.occupantDisplayImageUrl = occupantDiplayImageUrl
+        spotModel.spot.occupied = occupied
+        spotModel.spot.occupantUid = occupantUid
+        spotModel.spot.occupant = occupant
+        spotModel.spot.occupantDisplayImageUrl = occupantDiplayImageUrl
         
-        var state = AppState.SpotState.Open
+        var state = SpotState.Open
         
         if occupied {
-            if occupantUid == AppState.sharedInstance.uid {
+            if occupantUid == spotModel.user.uid {
                 state = .Owned
             } else {
                 state = .Occupied
